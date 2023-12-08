@@ -1,4 +1,4 @@
-const { EC2Client, RunInstancesCommand } = require('@aws-sdk/client-ec2');
+const { EC2Client, RunInstancesCommand, DescribeInstancesCommand } = require('@aws-sdk/client-ec2');
 const { credentials, region } = require('../common/config').AWS;
 
 let ec2Client;
@@ -14,7 +14,7 @@ async function createEC2Instance(options) {
     const req = new RunInstancesCommand(options);
     return await client.send(req);
   } catch (err) {
-    console.error('Error creating EC2 instance:', err);
+    console.error('Error createEC2Instance:', err);
     return null;
   } finally {
     // ec2Client.destroy();
@@ -22,6 +22,36 @@ async function createEC2Instance(options) {
   }
 }
 
+async function getInstanceDataById(id) {
+  try {
+    const client = initEC2Client();
+    const describeInstancesParams = { InstanceIds: [id] };
+    const req = new DescribeInstancesCommand(describeInstancesParams);
+
+    return client.send(req);
+  } catch (err) {
+    console.error('Error getInstanceDataById:', err);
+    return null;
+  }
+}
+
+async function describeAllInstances(options = {}) {
+  try {
+    const client = initEC2Client();
+    const req = new DescribeInstancesCommand(options);
+
+    const data = await client.send(req);
+    const instances = data.Reservations.flatMap((reservation) => reservation.Instances);
+
+    return instances;
+  } catch (err) {
+    console.error('Error describing instances:', err);
+    return null;
+  }
+}
+
 module.exports = {
-  createEC2Instance
+  createEC2Instance,
+  getInstanceDataById,
+  describeAllInstances
 };

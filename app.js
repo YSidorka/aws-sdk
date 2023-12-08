@@ -1,8 +1,5 @@
-const { ec2image } = require('./common/config').AWS;
-const { createEC2Instance } = require('./ec2');
+const { describeAllInstances } = require('./ec2');
 
-createEC2Instance({
-  ...ec2image,
-  MinCount: 1,
-  MaxCount: 1
+describeAllInstances().then(async (data) => {
+  console.log(data[0]);
 });
