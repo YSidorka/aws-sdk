@@ -1,0 +1,26 @@
+{
+  "name": "aws-sdk-course",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "YSidorka",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.27.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "start:dev": "node --inspect -r dotenv/config app.js dotenv_config_path=./.env",
+    "lint": "eslint . --fix --ext .js",
+    "format": "prettier -w ."
+  }
+}
