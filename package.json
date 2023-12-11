@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "start:dev": "node --inspect -r dotenv/config app.js dotenv_config_path=./.env",
+    "start:dev": "node --inspect-brk -r dotenv/config app.js dotenv_config_path=./.env",
     "lint": "eslint . --fix --ext .js",
     "format": "prettier -w ."
   }

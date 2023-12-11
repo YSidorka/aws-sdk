@@ -1,57 +1,88 @@
-const { EC2Client, RunInstancesCommand, DescribeInstancesCommand } = require('@aws-sdk/client-ec2');
-const { credentials, region } = require('../common/config').AWS;
+const {
+  EC2Client,
+  RunInstancesCommand,
+  DescribeInstancesCommand,
+  DescribeSecurityGroupsCommand,
+  CreateSecurityGroupCommand,
+  AuthorizeSecurityGroupIngressCommand,
+  AuthorizeSecurityGroupEgressCommand, DescribeSubnetsCommand, CreateTagsCommand
+} = require('@aws-sdk/client-ec2');
+const { credentials, region: defaultRegion } = require('../common/config').AWS;
 
-let ec2Client;
 
-function initEC2Client() {
-  if (!ec2Client) ec2Client = new EC2Client({ credentials, region });
-  return ec2Client;
-}
 
-async function createEC2Instance(options) {
+async function wrapper(region, fn) {
+  let client;
   try {
-    const client = initEC2Client();
-    const req = new RunInstancesCommand(options);
-    return await client.send(req);
+    client = new EC2Client({
+      credentials,
+      region: region || defaultRegion
+    });
+    return await client.send(fn());
   } catch (err) {
-    console.error('Error createEC2Instance:', err);
+    console.log(`Error ${fn?.$name}:`, err.message);
     return null;
   } finally {
-    // ec2Client.destroy();
-    // ec2Client = null;
+    client?.destroy();
+    client = null;
   }
 }
 
-async function getInstanceDataById(id) {
-  try {
-    const client = initEC2Client();
-    const describeInstancesParams = { InstanceIds: [id] };
-    const req = new DescribeInstancesCommand(describeInstancesParams);
-
-    return client.send(req);
-  } catch (err) {
-    console.error('Error getInstanceDataById:', err);
-    return null;
-  }
+async function createEC2Instance(options, region) {
+  const fn = ((options) => new RunInstancesCommand(options)).bind(null, options);
+  fn.$name = arguments.callee.name;
+  return wrapper(region, fn);
 }
 
-async function describeAllInstances(options = {}) {
-  try {
-    const client = initEC2Client();
-    const req = new DescribeInstancesCommand(options);
+async function getInstanceDataById(id, region) {
+  const fn = ((options) => new DescribeInstancesCommand(options)).bind(null, { InstanceIds: [id] });
+  fn.$name = arguments.callee.name;
+  const data = await wrapper(region, fn);
 
-    const data = await client.send(req);
-    const instances = data.Reservations.flatMap((reservation) => reservation.Instances);
+  return data?.Reservations;
+}
 
-    return instances;
-  } catch (err) {
-    console.error('Error describing instances:', err);
-    return null;
-  }
+async function getInstances(options, region) {
+  const fn = ((options) => new DescribeInstancesCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const data = await wrapper(region, fn);
+
+  let result = data?.Reservations.flatMap((reservation) => reservation.Instances);
+  result = result.filter((instance) => instance.State.Name !== 'terminated');
+  return result;
+}
+
+async function getSecurityGroups(options, region) {
+  const fn = ((options) => new DescribeSecurityGroupsCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const data = await wrapper(region, fn);
+
+  return data?.SecurityGroups || [];
+}
+
+async function getSubnetByAZ(azName, region) {
+  const fn = ((options) => new DescribeSubnetsCommand(options)).bind(null, {
+  //  Filters: [{ Name: 'availabilityZone', Values: [azName] }]
+  });
+  fn.$name = arguments.callee.name;
+  const data = await wrapper(region, fn);
+
+  return data?.Subnets[0];
+}
+
+async function assignTagParams(options, region) {
+  const fn = ((options) => new CreateTagsCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const result = await wrapper(region, fn);
+
+  return result;
 }
 
 module.exports = {
   createEC2Instance,
   getInstanceDataById,
-  describeAllInstances
+  getInstances,
+  getSecurityGroups,
+  getSubnetByAZ,
+  assignTagParams
 };
