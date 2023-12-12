@@ -19,10 +19,10 @@ class SGClass {
     this.Description = Description || '';
     this.IpProtocol = IpProtocol || 'tcp';
 
-    this.IpPermissions = (Array.isArray(IpPermissions)) ? IpPermissions : [];
-    this.IpPermissionsEgress = (Array.isArray(IpPermissionsEgress)) ? IpPermissionsEgress : [];
+    this.IpPermissions = Array.isArray(IpPermissions) ? IpPermissions : [];
+    this.IpPermissionsEgress = Array.isArray(IpPermissionsEgress) ? IpPermissionsEgress : [];
     Object.assign(this, _obj);
   }
 }
 
-module.exports = SGClass
+module.exports = SGClass;

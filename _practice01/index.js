@@ -12,13 +12,13 @@ async function init() {
         const sg = sgList.find((item) => item.GroupName === name);
         return sg?.GroupId;
       });
-      ec2.SecurityGroupIds = ec2.SecurityGroupIds.filter(item => !!item);
+      ec2.SecurityGroupIds = ec2.SecurityGroupIds.filter((item) => !!item);
       delete ec2.SecurityGroups;
-    })
+    });
     const ec2List = await createInstances(EC2_LIST);
 
     console.log(ec2List);
-  } catch(err) {
+  } catch (err) {
     console.log('Error:', err);
   }
 }

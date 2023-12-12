@@ -37,7 +37,7 @@ const items = {
     InstanceType: 't3.micro',
     ImageId: 'ami-0b48feff5edeb9293',
     SecurityGroups: ['sg-http-euc2']
-  },
+  }
 
   // 't3micro-ui-euc2-b': {
   //   region: ZURICH,
@@ -60,5 +60,5 @@ const items = {
   //   InstanceType: 't3.micro',
   //   ImageId: 'ami-0b48feff5edeb9293'
   // }
-}
+};
 module.exports = Object.values(items).map((item) => new EC2Class(item));

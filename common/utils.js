@@ -1,4 +1,11 @@
-const { getInstances, getSubnetByAZ, createEC2Instance, assignTagParams, getSecurityGroups, createSecurityGroup } = require('../ec2');
+const {
+  getInstances,
+  getSubnetByAZ,
+  createEC2Instance,
+  assignTagParams,
+  getSecurityGroups,
+  createSecurityGroup
+} = require('../ec2');
 
 async function sleep(time) {
   return new Promise((resolve) => setTimeout(() => resolve(), time)); // eslint-disable-line
@@ -7,12 +14,14 @@ async function sleep(time) {
 async function createInstances(list) {
   const result = [];
   try {
-    for (let i = 0; i < list.length; i++) {
-
+    for (let i = 0; i < list.length; i += 1) {
       const item = list[i];
-      let [ec2] = await getInstances({
-        Filters: [{ Name: 'tag:Name', Values: [item.Name] }]
-      }, item.Region);
+      let [ec2] = await getInstances(
+        {
+          Filters: [{ Name: 'tag:Name', Values: [item.Name] }]
+        },
+        item.Region
+      );
 
       if (ec2) {
         result.push(ec2);
@@ -20,12 +29,15 @@ async function createInstances(list) {
       }
 
       const subnet = await getSubnetByAZ(item.zone, item.Region);
-      ec2 = await createEC2Instance({
-        ...item,
-        MinCount: 1,
-        MaxCount: 1,
-        SubnetId: subnet?.SubnetId || null
-      }, item.Region);
+      ec2 = await createEC2Instance(
+        {
+          ...item,
+          MinCount: 1,
+          MaxCount: 1,
+          SubnetId: subnet?.SubnetId || null
+        },
+        item.Region
+      );
 
       if (!ec2 || !Array.isArray(ec2.Instances)) {
         console.log('Item not created:', JSON.stringify(item));
@@ -33,10 +45,13 @@ async function createInstances(list) {
       }
 
       // assign Tags / Names
-      await assignTagParams({
-        Resources: ec2.Instances.map(instance => instance.InstanceId),
-        Tags: item.Tags,
-      }, item.Region);
+      await assignTagParams(
+        {
+          Resources: ec2.Instances.map((instance) => instance.InstanceId),
+          Tags: item.Tags
+        },
+        item.Region
+      );
 
       result.push(...ec2.Instances);
     }
@@ -50,11 +65,14 @@ async function createInstances(list) {
 async function createSecurityGroups(list) {
   const result = [];
   try {
-    for (let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i += 1) {
       const item = list[i];
-      let [sg] = await getSecurityGroups({
-        Filters: [{ Name: 'group-name', Values: [item.GroupName] }]
-      }, item.Region);
+      let [sg] = await getSecurityGroups(
+        {
+          Filters: [{ Name: 'group-name', Values: [item.GroupName] }]
+        },
+        item.Region
+      );
 
       if (!sg) sg = await createSecurityGroup({ ...item }, item.Region);
       if (sg) result.push(sg);

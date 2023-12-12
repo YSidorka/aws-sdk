@@ -7,7 +7,8 @@ const {
   AuthorizeSecurityGroupIngressCommand,
   AuthorizeSecurityGroupEgressCommand,
   DescribeSubnetsCommand,
-  CreateTagsCommand, RevokeSecurityGroupEgressCommand
+  CreateTagsCommand,
+  RevokeSecurityGroupEgressCommand
 } = require('@aws-sdk/client-ec2');
 const { credentials, region: defaultRegion } = require('../common/config').AWS;
 
@@ -29,23 +30,23 @@ async function wrapper(region, fn) {
 }
 
 async function createEC2Instance(options, region) {
-  const fn = ((options) => new RunInstancesCommand(options)).bind(null, options);
+  const fn = (obj) => new RunInstancesCommand(obj);
   fn.$name = arguments.callee.name;
-  return wrapper(region, fn);
+  return wrapper(region, fn.bind(null, options));
 }
 
 async function getInstanceDataById(id, region) {
-  const fn = ((options) => new DescribeInstancesCommand(options)).bind(null, { InstanceIds: [id] });
+  const fn = (obj) => new DescribeInstancesCommand(obj);
   fn.$name = arguments.callee.name;
-  const data = await wrapper(region, fn);
+  const data = await wrapper(region, fn.bind(null, { InstanceIds: [id] }));
 
   return data?.Reservations;
 }
 
 async function getInstances(options, region) {
-  const fn = ((options) => new DescribeInstancesCommand(options)).bind(null, options || {});
+  const fn = (obj) => new DescribeInstancesCommand(obj);
   fn.$name = arguments.callee.name;
-  const data = await wrapper(region, fn);
+  const data = await wrapper(region, fn.bind(null, options || {}));
 
   let result = data?.Reservations.flatMap((reservation) => reservation.Instances);
   result = result.filter((instance) => instance.State.Name !== 'terminated');
@@ -53,9 +54,9 @@ async function getInstances(options, region) {
 }
 
 async function createSecurityGroup(options, region) {
-  const fn = ((options) => new CreateSecurityGroupCommand(options)).bind(null, options || {});
+  const fn = (obj) => new CreateSecurityGroupCommand(obj);
   fn.$name = arguments.callee.name;
-  const { GroupId } = await wrapper(region, fn);
+  const { GroupId } = await wrapper(region, fn.bind(null, options || {}));
 
   if (!GroupId) return null;
 
@@ -68,7 +69,7 @@ async function createSecurityGroup(options, region) {
 
   if (options.IpPermissionsEgress.length > 0) {
     await assignSecurityGroupOutboundRule({
-     GroupId,
+      GroupId,
       IpPermissions: options.IpPermissionsEgress
     }, region);
 
@@ -83,67 +84,51 @@ async function createSecurityGroup(options, region) {
 }
 
 async function getSecurityGroups(options, region) {
-  const fn = ((options) => new DescribeSecurityGroupsCommand(options)).bind(null, options || {});
+  const fn = (obj) => new DescribeSecurityGroupsCommand(obj);
   fn.$name = arguments.callee.name;
-  const data = await wrapper(region, fn);
+  const data = await wrapper(region, fn.bind(null, options || {}));
 
   return data?.SecurityGroups || [];
 }
 
 async function getSubnetByAZ(azName, region) {
-  const fn = ((options) => new DescribeSubnetsCommand(options)).bind(null, {
-    Filters: [
-      { Name: 'availabilityZone', Values: [azName] },
-      { Name: 'tag:Name', Values: [azName] }
-    ]
-  });
+  const fn = (obj) => new DescribeSubnetsCommand(obj);
   fn.$name = arguments.callee.name;
-  let data = await wrapper(region, fn);
 
-  if (data?.Subnets.length > 1) {
-    const fn = ((options) => new DescribeSubnetsCommand(options)).bind(null, {
+  const data = await wrapper(
+    region,
+    fn.bind(null, {
       Filters: [
         { Name: 'availabilityZone', Values: [azName] },
         { Name: 'tag:Name', Values: [azName] }
       ]
-    });
-    fn.$name = arguments.callee.name;
-    data = await wrapper(region, fn);
-  }
-
+    })
+  );
   return data?.Subnets[0];
 }
 
 async function assignTagParams(options, region) {
-  const fn = ((options) => new CreateTagsCommand(options)).bind(null, options || {});
+  const fn = (obj) => new CreateTagsCommand(obj);
   fn.$name = arguments.callee.name;
-  const result = await wrapper(region, fn);
-
-  return result;
+  return wrapper(region, fn.bind(null, options || {}));
 }
 
 async function assignSecurityGroupInboundRule(options, region) {
-  const fn = ((options) => new AuthorizeSecurityGroupIngressCommand(options)).bind(null, options || {});
+  const fn = (obj) => new AuthorizeSecurityGroupIngressCommand(obj);
   fn.$name = arguments.callee.name;
-  const result = await wrapper(region, fn);
-
-  return result;
+  return wrapper(region, fn.bind(null, options || {}));
 }
 
 async function assignSecurityGroupOutboundRule(options, region) {
-  const fn = ((options) => new AuthorizeSecurityGroupEgressCommand(options)).bind(null, options || {});
+  const fn = (obj) => new AuthorizeSecurityGroupEgressCommand(obj);
   fn.$name = arguments.callee.name;
-  const result = await wrapper(region, fn);
-
-  return result;
+  return wrapper(region, fn.bind(null, options || {}));
 }
 
 async function removeSecurityGroupOutboundRule(options, region) {
-  const fn = ((options) => new RevokeSecurityGroupEgressCommand(options)).bind(null, options || {});
+  const fn = (obj) => new RevokeSecurityGroupEgressCommand(obj);
   fn.$name = arguments.callee.name;
-  const result = await wrapper(region, fn);
-
-  return result;
+  return wrapper(region, fn.bind(null, options || {}));
 }
 
 module.exports = {

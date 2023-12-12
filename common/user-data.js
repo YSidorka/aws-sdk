@@ -7,4 +7,5 @@ module.exports = [
   systemctl start httpd
   systemctl enable httpd
   echo "<h1>EC2</h1><hr><p>from $(hostname -f)</p>" > /var/www/html/index.html
-`]
+`
+];

@@ -1,3 +1,5 @@
+const USER_DATA = require('./user-data')[0];
+
 const env = JSON.parse(process.env.AWS || '{}');
 
 const AWS = initAWSConfig(env);
@@ -29,5 +31,5 @@ module.exports = {
   ZURICH: 'eu-central-2',
   PARIS: 'eu-west-3',
 
-  USER_DATA: require('./user-data')[0]
+  USER_DATA
 };
