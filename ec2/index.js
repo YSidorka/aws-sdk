@@ -5,11 +5,11 @@ const {
   DescribeSecurityGroupsCommand,
   CreateSecurityGroupCommand,
   AuthorizeSecurityGroupIngressCommand,
-  AuthorizeSecurityGroupEgressCommand, DescribeSubnetsCommand, CreateTagsCommand
+  AuthorizeSecurityGroupEgressCommand,
+  DescribeSubnetsCommand,
+  CreateTagsCommand, RevokeSecurityGroupEgressCommand
 } = require('@aws-sdk/client-ec2');
 const { credentials, region: defaultRegion } = require('../common/config').AWS;
-
-
 
 async function wrapper(region, fn) {
   let client;
@@ -52,6 +52,36 @@ async function getInstances(options, region) {
   return result;
 }
 
+async function createSecurityGroup(options, region) {
+  const fn = ((options) => new CreateSecurityGroupCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const { GroupId } = await wrapper(region, fn);
+
+  if (!GroupId) return null;
+
+  if (options.IpPermissions.length > 0) {
+    await assignSecurityGroupInboundRule({
+      GroupId,
+      IpPermissions: options.IpPermissions
+    }, region);
+  }
+
+  if (options.IpPermissionsEgress.length > 0) {
+    await assignSecurityGroupOutboundRule({
+     GroupId,
+      IpPermissions: options.IpPermissionsEgress
+    }, region);
+
+    await removeSecurityGroupOutboundRule({
+      GroupId,
+      IpPermissions: [{ IpProtocol: '-1', IpRanges: [{ CidrIp: '0.0.0.0/0' }] }]
+    }, region);
+  }
+
+  const [result] = await getSecurityGroups({ GroupIds: [GroupId] }, region);
+  return result;
+}
+
 async function getSecurityGroups(options, region) {
   const fn = ((options) => new DescribeSecurityGroupsCommand(options)).bind(null, options || {});
   fn.$name = arguments.callee.name;
@@ -62,10 +92,24 @@ async function getSecurityGroups(options, region) {
 
 async function getSubnetByAZ(azName, region) {
   const fn = ((options) => new DescribeSubnetsCommand(options)).bind(null, {
-  //  Filters: [{ Name: 'availabilityZone', Values: [azName] }]
+    Filters: [
+      { Name: 'availabilityZone', Values: [azName] },
+      { Name: 'tag:Name', Values: [azName] }
+    ]
   });
   fn.$name = arguments.callee.name;
-  const data = await wrapper(region, fn);
+  let data = await wrapper(region, fn);
+
+  if (data?.Subnets.length > 1) {
+    const fn = ((options) => new DescribeSubnetsCommand(options)).bind(null, {
+      Filters: [
+        { Name: 'availabilityZone', Values: [azName] },
+        { Name: 'tag:Name', Values: [azName] }
+      ]
+    });
+    fn.$name = arguments.callee.name;
+    data = await wrapper(region, fn);
+  }
 
   return data?.Subnets[0];
 }
@@ -78,11 +122,42 @@ async function assignTagParams(options, region) {
   return result;
 }
 
+async function assignSecurityGroupInboundRule(options, region) {
+  const fn = ((options) => new AuthorizeSecurityGroupIngressCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const result = await wrapper(region, fn);
+
+  return result;
+}
+
+async function assignSecurityGroupOutboundRule(options, region) {
+  const fn = ((options) => new AuthorizeSecurityGroupEgressCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const result = await wrapper(region, fn);
+
+  return result;
+}
+
+async function removeSecurityGroupOutboundRule(options, region) {
+  const fn = ((options) => new RevokeSecurityGroupEgressCommand(options)).bind(null, options || {});
+  fn.$name = arguments.callee.name;
+  const result = await wrapper(region, fn);
+
+  return result;
+}
+
 module.exports = {
   createEC2Instance,
   getInstanceDataById,
   getInstances,
+
+  createSecurityGroup,
   getSecurityGroups,
+
+  assignSecurityGroupInboundRule,
+  assignSecurityGroupOutboundRule,
+  removeSecurityGroupOutboundRule,
+
   getSubnetByAZ,
   assignTagParams
 };
