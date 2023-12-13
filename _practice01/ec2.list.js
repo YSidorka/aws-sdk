@@ -6,38 +6,44 @@ const items = {
     region: FRANKFURT,
     zone: `${FRANKFURT}a`,
     name: 't2-ui-a',
+    InstanceType: 't2.micro',
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-http-euc1']
-  },
+    SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
+  }
 
   // 't2micro-ui-euc1-b': {
   //   region: FRANKFURT,
   //   zone: `${FRANKFURT}b`,
   //   name: 't2-ui-b',
+  //   InstanceType: 't2.micro',
   //   ImageId: 'ami-0669b163befffbdfc',
-  //   SecurityGroups: ['sg-http-euc1']
+  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
   // },
   // 't2micro-api-euc1-a': {
   //   region: FRANKFURT,
   //   zone: `${FRANKFURT}a`,
   //   name: 't2-api-a',
-  //   ImageId: 'ami-0669b163befffbdfc'
+  //   InstanceType: 't2.micro',
+  //   ImageId: 'ami-0669b163befffbdfc',
+  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
   // },
   // 't2micro-api-euc1-b': {
   //   region: FRANKFURT,
   //   zone: `${FRANKFURT}b`,
   //   name: 't2-api-b',
-  //   ImageId: 'ami-0669b163befffbdfc'
+  //   InstanceType: 't2.micro',
+  //   ImageId: 'ami-0669b163befffbdfc',
+  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
   // },
 
-  't3micro-ui-euc2-a': {
-    region: ZURICH,
-    zone: `${ZURICH}a`,
-    name: 't3-ui-a',
-    InstanceType: 't3.micro',
-    ImageId: 'ami-0b48feff5edeb9293',
-    SecurityGroups: ['sg-http-euc2']
-  }
+  // 't3micro-ui-euc2-a': {
+  //   region: ZURICH,
+  //   zone: `${ZURICH}a`,
+  //   name: 't3-ui-a',
+  //   InstanceType: 't3.micro',
+  //   ImageId: 'ami-0b48feff5edeb9293',
+  //   SecurityGroups: ['sg-http-euc2']
+  // }
 
   // 't3micro-ui-euc2-b': {
   //   region: ZURICH,

@@ -4,7 +4,8 @@ const {
   createEC2Instance,
   assignTagParams,
   getSecurityGroups,
-  createSecurityGroup
+  createSecurityGroup,
+  requestSpotEC2Instance
 } = require('../ec2');
 
 async function sleep(time) {
@@ -29,9 +30,12 @@ async function createInstances(list) {
       }
 
       const subnet = await getSubnetByAZ(item.zone, item.Region);
+      // ec2 = await requestSpotEC2Instance(
       ec2 = await createEC2Instance(
         {
           ...item,
+          // SpotPrice: '0.06',
+          // InstanceCount: 1,
           MinCount: 1,
           MaxCount: 1,
           SubnetId: subnet?.SubnetId || null

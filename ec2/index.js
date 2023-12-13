@@ -8,7 +8,8 @@ const {
   AuthorizeSecurityGroupEgressCommand,
   DescribeSubnetsCommand,
   CreateTagsCommand,
-  RevokeSecurityGroupEgressCommand
+  RevokeSecurityGroupEgressCommand,
+  RequestSpotInstancesCommand
 } = require('@aws-sdk/client-ec2');
 const { credentials, region: defaultRegion } = require('../common/config').AWS;
 
@@ -33,6 +34,20 @@ async function createEC2Instance(options, region) {
   const fn = (obj) => new RunInstancesCommand(obj);
   fn.$name = arguments.callee.name;
   return wrapper(region, fn.bind(null, options));
+}
+
+async function requestSpotEC2Instance(options, region) {
+  const { SpotPrice, InstanceCount, ...LaunchSpecification } = options;
+
+  const request = {
+    SpotPrice,
+    InstanceCount,
+    LaunchSpecification
+  };
+
+  const fn = (obj) => new RequestSpotInstancesCommand(obj);
+  fn.$name = arguments.callee.name;
+  return wrapper(region, fn.bind(null, request));
 }
 
 async function getInstanceDataById(id, region) {
@@ -62,20 +77,20 @@ async function createSecurityGroup(options, region) {
 
   if (options.IpPermissions.length > 0) {
     await assignSecurityGroupInboundRule({
-      GroupId,
-      IpPermissions: options.IpPermissions
+        GroupId,
+        IpPermissions: options.IpPermissions
     }, region);
   }
 
   if (options.IpPermissionsEgress.length > 0) {
     await assignSecurityGroupOutboundRule({
-      GroupId,
-      IpPermissions: options.IpPermissionsEgress
+        GroupId,
+        IpPermissions: options.IpPermissionsEgress
     }, region);
 
     await removeSecurityGroupOutboundRule({
-      GroupId,
-      IpPermissions: [{ IpProtocol: '-1', IpRanges: [{ CidrIp: '0.0.0.0/0' }] }]
+        GroupId,
+        IpPermissions: [{ IpProtocol: '-1', IpRanges: [{ CidrIp: '0.0.0.0/0' }] }]
     }, region);
   }
 
@@ -133,6 +148,8 @@ async function removeSecurityGroupOutboundRule(options, region) {
 
 module.exports = {
   createEC2Instance,
+  requestSpotEC2Instance,
+
   getInstanceDataById,
   getInstances,
 
