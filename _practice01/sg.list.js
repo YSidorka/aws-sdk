@@ -2,6 +2,12 @@ const { FRANKFURT, ZURICH } = require('../common/config');
 const SGClass = require('../ec2/sg.class');
 
 const items = {
+  'sg-ec2-euc1': {
+    name: `sg-ec2-euc1`,
+    region: FRANKFURT,
+    Description: `security group EC2 (${FRANKFURT})`,
+    IpPermissions: []
+  },
   'sg-http-euc1': {
     name: `sg-http-euc1`,
     region: FRANKFURT,

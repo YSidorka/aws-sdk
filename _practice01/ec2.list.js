@@ -8,8 +8,8 @@ const items = {
     name: 't2-ui-a',
     InstanceType: 't2.micro',
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
-  }
+    SecurityGroups: ['sg-ec2-euc1']
+  },
 
   // 't2micro-ui-euc1-b': {
   //   region: FRANKFURT,
@@ -17,7 +17,7 @@ const items = {
   //   name: 't2-ui-b',
   //   InstanceType: 't2.micro',
   //   ImageId: 'ami-0669b163befffbdfc',
-  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
+  //   SecurityGroups: ['sg-ec2-euc1', 'sg-ssh-euc1']
   // },
   // 't2micro-api-euc1-a': {
   //   region: FRANKFURT,
@@ -25,7 +25,7 @@ const items = {
   //   name: 't2-api-a',
   //   InstanceType: 't2.micro',
   //   ImageId: 'ami-0669b163befffbdfc',
-  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
+  //   SecurityGroups: ['sg-ec2-euc1']
   // },
   // 't2micro-api-euc1-b': {
   //   region: FRANKFURT,
@@ -33,7 +33,7 @@ const items = {
   //   name: 't2-api-b',
   //   InstanceType: 't2.micro',
   //   ImageId: 'ami-0669b163befffbdfc',
-  //   SecurityGroups: ['sg-http-euc1', 'sg-ssh-euc1']
+  //   SecurityGroups: ['sg-ec2-euc1', 'sg-ssh-euc1']
   // },
 
   // 't3micro-ui-euc2-a': {
