@@ -1,4 +1,4 @@
-const { createSecurityGroups, createInstances } = require('../common/utils');
+const { createSecurityGroups, createInstances } = require('../common');
 
 const EC2_LIST = require('./ec2.list');
 const SG_LIST = require('./sg.list');
