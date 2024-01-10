@@ -9,7 +9,7 @@ const items = {
     InstanceType: 't2.micro',
     ImageId: 'ami-0669b163befffbdfc',
     SecurityGroups: ['sg-ec2-euc1']
-  },
+  }
 
   // 't2micro-ui-euc1-b': {
   //   region: FRANKFURT,

@@ -6,13 +6,14 @@ const {
   createSecurityGroup,
   createSpotEC2Instance
 } = require('../ec2');
+const { createS3Bucket, getBucketByName } = require('../s3');
 
 async function createInstances(list) {
   const result = [];
   try {
     for (let i = 0; i < list.length; i += 1) {
       const item = list[i];
-      let [ec2] = await getInstances(
+      const [ec2] = await getInstances(
         {
           Filters: [{ Name: 'tag:Name', Values: [item.Name] }]
         },
@@ -50,11 +51,14 @@ async function createSpotInstances(list, price = '0.01', maxCount = 1) {
     for (let i = 0; i < list.length; i += 1) {
       const item = list[i];
 
-      const spotList = await createSpotEC2Instance({
-        ...item,
-        SpotPrice: price,
-        InstanceCount: maxCount
-      }, 10000);
+      const spotList = await createSpotEC2Instance(
+        {
+          ...item,
+          SpotPrice: price,
+          InstanceCount: maxCount
+        },
+        10000
+      );
 
       if (Array.isArray(spotList)) {
         const ec2List = await getInstances(
@@ -95,8 +99,32 @@ async function createSecurityGroups(list) {
   }
 }
 
+async function createS3Buckets(list) {
+  const result = [];
+  try {
+    for (let i = 0; i < list.length; i += 1) {
+      const item = list[i];
+      const bucket = await getBucketByName(item.Bucket);
+
+      if (bucket) {
+        result.push(bucket);
+        continue;
+      }
+
+      const newBucket = await createS3Bucket({ ...item }, item.Region);
+
+      if (newBucket) result.push(newBucket);
+    }
+    return result;
+  } catch (err) {
+    console.log('Error createS3Buckets:', err);
+    return result;
+  }
+}
+
 module.exports = {
   createInstances,
   createSpotInstances,
-  createSecurityGroups
+  createSecurityGroups,
+  createS3Buckets
 };

@@ -20,7 +20,7 @@ class EC2Class {
     this.ImageId = obj.ImageId || null;
 
     this.Name = `${PREFIX}-${obj.name}` || '';
-    this.Tags = [{ Key: 'Name', Value: `${PREFIX}-${obj.name}` }];
+    this.Tags = [{ Key: 'Name', Value: this.Name }];
 
     this.SecurityGroups = Array.isArray(obj.SecurityGroups)
       ? obj.SecurityGroups.map((name) => `${PREFIX}-${name}`)

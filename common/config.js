@@ -11,8 +11,7 @@ function initAWSConfig(obj) {
       accessKeyId: obj.ACCESS_KEY_ID,
       secretAccessKey: obj.SECRET_KEY
     },
-    region: obj.REGION,
-    ec2image: obj.EC2_T2MICRO
+    defaultRegion: obj.REGION
   };
 }
 
