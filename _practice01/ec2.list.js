@@ -1,5 +1,10 @@
 const { FRANKFURT, ZURICH, T3_MICRO, T2_MICRO } = require('../common/config');
 const EC2Class = require('../ec2/ec2.class');
+const {
+  SG_EC2_EUC1,
+  SG_SSH_EUC1,
+  SG_HTTP_EUC1
+} = require('./sg.list').SG_ITEMS;
 
 const items = {
   't2micro-ui-euc1-a': {
@@ -9,7 +14,7 @@ const items = {
     Name: 't2-ui-a',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-ec2-euc1']
+    SecurityGroups: [SG_EC2_EUC1.Name, SG_HTTP_EUC1.Name]
   },
   't2micro-ui-euc1-b': {
     Region: FRANKFURT,
@@ -18,7 +23,10 @@ const items = {
     Name: 't2-ui-b',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-ec2-euc1', 'sg-ssh-euc1']
+    SecurityGroups: [
+      SG_EC2_EUC1.Name,
+      SG_SSH_EUC1.Name
+    ]
   },
   't2micro-api-euc1-a': {
     Region: FRANKFURT,
@@ -27,7 +35,7 @@ const items = {
     Name: 't2-api-a',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-ec2-euc1']
+    SecurityGroups: [SG_EC2_EUC1.Name]
   },
   't2micro-api-euc1-b': {
     Region: FRANKFURT,
@@ -36,7 +44,10 @@ const items = {
     Name: 't2-api-b',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: ['sg-ec2-euc1', 'sg-ssh-euc1']
+    SecurityGroups: [
+      SG_EC2_EUC1.Name,
+      SG_SSH_EUC1.Name
+    ]
   },
 
   // 't3micro-ui-euc2-a': {
@@ -76,4 +87,10 @@ const items = {
   //   SecurityGroups: ['sg-http-euc2']
   // }
 };
-module.exports = Object.values(items).map((item) => new EC2Class(item));
+
+Object.keys(items).forEach((key) => items[key] = new EC2Class(items[key]));
+
+module.exports = {
+  get EC2_ITEMS() { return items },
+  get EC2_LIST() { return Object.values(items) }
+}

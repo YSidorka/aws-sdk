@@ -4,26 +4,29 @@ class SGClass {
   constructor(obj) {
     const {
       Region,
-      GroupName,
+      Name,
       Description,
       IpProtocol,
       IpPermissions,
       IpPermissionsEgress,
       VpcId,
-      name,
+      VpcName,
+
       _obj
     } = obj;
 
     this.Region = Region || obj.region;
 
-    this.GroupName = GroupName || `${PREFIX}-${name}`;
+    this.Name = `${PREFIX}-${Name}`;
+    this.GroupName = this.Name;
     this.Description = Description || '';
     this.IpProtocol = IpProtocol || 'tcp';
 
     this.IpPermissions = Array.isArray(IpPermissions) ? IpPermissions : [];
     this.IpPermissionsEgress = Array.isArray(IpPermissionsEgress) ? IpPermissionsEgress : [];
 
-    this.VpcId = VpcId || '';
+    this.VpcId = VpcId || null;
+    this.VpcName = VpcName || null;
     Object.assign(this, _obj);
   }
 }

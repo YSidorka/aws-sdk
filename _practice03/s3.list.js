@@ -3,8 +3,8 @@ const S3Class = require('../s3/s3.class');
 
 const items = {
   's3-lambda-store-euc1': {
-    name: `s3-lambda-store-euc1`,
-    region: FRANKFURT
+    Name: `s3-lambda-store-euc1`,
+    Region: FRANKFURT
   }
 };
 

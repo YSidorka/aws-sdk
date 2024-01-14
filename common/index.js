@@ -4,7 +4,8 @@ const {
   createEC2Instance,
   getSecurityGroups,
   createSecurityGroup,
-  createSpotEC2Instance
+  createSpotEC2Instance,
+  createVPC, getVPCByName
 } = require('../ec2');
 const { createS3Bucket, getBucketByName } = require('../s3');
 
@@ -88,13 +89,23 @@ async function createSecurityGroups(list) {
       const item = list[i];
       let [sg] = await getSecurityGroups(
         {
-          Filters: [{ Name: 'group-name', Values: [item.GroupName] }]
+          Filters: [{ Name: 'group-name', Values: [item.Name] }]
         },
         item.Region
       );
 
-      if (!sg) sg = await createSecurityGroup({ ...item }, item.Region);
-      if (sg) result.push(sg);
+      if (sg) {
+        result.push(sg);
+        continue;
+      }
+
+      if (!item.VpcId && item.VpcName) {
+        const vpc = await getVPCByName(item.VpcName, item.Region);
+        item.VpcId = vpc?.VpcId || null;
+      }
+
+      sg = await createSecurityGroup({ ...item }, item.Region);
+      result.push(sg);
     }
     return result;
   } catch (err) {
@@ -116,7 +127,6 @@ async function createS3Buckets(list) {
       }
 
       const newBucket = await createS3Bucket({ ...item }, item.Region);
-
       if (newBucket) result.push(newBucket);
     }
     return result;
@@ -126,9 +136,33 @@ async function createS3Buckets(list) {
   }
 }
 
+async function createVPCs(list) {
+  const result = [];
+  try {
+    for (let i = 0; i < list.length; i += 1) {
+      const item = list[i];
+
+      // check is VPC exists
+      const vpc = await getVPCByName(item.Name, item.Region);
+
+      if (vpc) {
+        result.push(vpc);
+        continue;
+      }
+
+      const newVPC = await createVPC({ ...item }, item.Region);
+      if (newVPC) result.push(newVPC);
+    }
+    return result;
+  } catch (err) {
+    console.log('Error createVPCs:', err);
+    return result;
+  }
+}
 module.exports = {
   createInstances,
   createSpotInstances,
   createSecurityGroups,
-  createS3Buckets
+  createS3Buckets,
+  createVPCs
 };

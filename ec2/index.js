@@ -10,7 +10,7 @@ const {
   CreateTagsCommand,
   RevokeSecurityGroupEgressCommand,
   RequestSpotInstancesCommand,
-  DescribeSpotInstanceRequestsCommand
+  DescribeSpotInstanceRequestsCommand, CreateVpcCommand, DescribeVpcsCommand
 } = require('@aws-sdk/client-ec2');
 
 const { sleep } = require('../common/utils');
@@ -173,21 +173,6 @@ async function getSecurityGroups(options, region) {
   return data?.SecurityGroups || [];
 }
 
-async function getSubnetByName(subnetName, region) {
-  const fn = (obj) => new DescribeSubnetsCommand(obj);
-  const data = await wrapper({
-    $name: arguments.callee.name,
-    region,
-    fn: fn.bind(null, {
-      Filters: [
-        // { Name: 'availabilityZone', Values: [subnetName] },
-        { Name: 'tag:Name', Values: [subnetName] }
-      ]
-    })
-  });
-  return data?.Subnets[0];
-}
-
 async function assignTagParams(options, region) {
   const fn = (obj) => new CreateTagsCommand(obj);
   return wrapper({
@@ -224,6 +209,54 @@ async function removeSecurityGroupOutboundRule(options, region) {
   });
 }
 
+async function createVPC(options, region) {
+  const fn = (obj) => new CreateVpcCommand(obj);
+  const data = await wrapper({
+    $name: arguments.callee.name,
+    region,
+    fn: fn.bind(null, options || {})
+  });
+
+  if (data?.Vpc?.VpcId) {
+    await assignTagParams(
+      {
+        Resources: [data.Vpc.VpcId],
+        Tags: options.Tags
+      },
+      region
+    );
+  }
+
+  return data?.Vpc;
+}
+
+async function getVPCByName(subnetName, region) {
+  const fn = (obj) => new DescribeVpcsCommand(obj);
+  const data = await wrapper({
+    $name: arguments.callee.name,
+    region,
+    fn: fn.bind(null, {
+      Filters: [{ Name: 'tag:Name', Values: [subnetName] }]
+    })
+  });
+  return data?.Vpcs[0];
+}
+
+async function getSubnetByName(subnetName, region) {
+  const fn = (obj) => new DescribeSubnetsCommand(obj);
+  const data = await wrapper({
+    $name: arguments.callee.name,
+    region,
+    fn: fn.bind(null, {
+      Filters: [
+        // { Name: 'availabilityZone', Values: [subnetName] },
+        { Name: 'tag:Name', Values: [subnetName] }
+      ]
+    })
+  });
+  return data?.Subnets[0];
+}
+
 module.exports = {
   createEC2Instance,
   createSpotEC2Instance,
@@ -238,6 +271,12 @@ module.exports = {
   assignSecurityGroupOutboundRule,
   removeSecurityGroupOutboundRule,
 
-  getSubnetByName,
-  assignTagParams
+  assignTagParams,
+
+  // VPC
+  createVPC,
+  getVPCByName,
+
+  // Subnet
+  getSubnetByName
 };

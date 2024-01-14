@@ -19,19 +19,20 @@ class EC2Class {
 
     this.Region = Region || obj.region;
 
-    this.InstanceType = obj.InstanceType || null;
-    this.ImageId = obj.ImageId || null;
+    this.InstanceType = InstanceType || null;
+    this.ImageId = ImageId || null;
 
-    this.Name = `${PREFIX}-${obj.Name}` || '';
+    this.Name = `${PREFIX}-${Name}`;
     this.Tags = [{ Key: 'Name', Value: this.Name }];
 
-    this.SubnetId = obj.SubnetId || null;
-    this.SubnetName = obj.SubnetName || null;
-    this.SecurityGroups = Array.isArray(obj.SecurityGroups)
-      ? obj.SecurityGroups.map((name) => `${PREFIX}-${name}`)
+    this.SubnetId = SubnetId || null;
+    this.SubnetName = SubnetName || null;
+    this.SecurityGroups = Array.isArray(SecurityGroups)
+      //? SecurityGroups.map((sgName) => `${PREFIX}-${sgName}`)
+      ? [...SecurityGroups]
       : [];
 
-    this.UserData = btoa(obj.UserData || USER_DATA);
+    this.UserData = btoa(UserData || USER_DATA);
     Object.assign(this, _obj);
   }
 }

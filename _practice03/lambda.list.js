@@ -3,8 +3,8 @@ const LambdaClass = require('../lambda/lambda.class');
 
 const items = {
   'lambda-getProducts-euc1': {
-    name: `lambda-getProducts-euc1`,
-    region: FRANKFURT,
+    Name: `lambda-getProducts-euc1`,
+    Region: FRANKFURT,
 
     Runtime: 'nodejs20.x',
     Role: '',

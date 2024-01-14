@@ -4,6 +4,7 @@ class LambdaClass {
   constructor(obj) {
     const {
       Region,
+      Name,
       Runtime,
       Role, // required
       Handler,
@@ -15,7 +16,7 @@ class LambdaClass {
 
     this.Region = Region || obj.region;
 
-    this.FunctionName = `${PREFIX}-${obj.name}` || '';
+    this.FunctionName = `${PREFIX}-${obj.Name}`;
     this.Runtime = Runtime || 'nodejs20.x';
     this.Role = Role;
     this.Handler = Handler || 'index.handler';

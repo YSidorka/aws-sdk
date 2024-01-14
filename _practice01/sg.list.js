@@ -2,15 +2,15 @@ const { FRANKFURT, ZURICH } = require('../common/config');
 const SGClass = require('../ec2/sg.class');
 
 const items = {
-  'sg-ec2-euc1': {
-    name: `sg-ec2-euc1`,
-    region: FRANKFURT,
+  'SG_EC2_EUC1': {
+    Name: `sg-ec2-euc1`,
+    Region: FRANKFURT,
     Description: `security group EC2 (${FRANKFURT})`,
     IpPermissions: []
   },
-  'sg-http-euc1': {
-    name: `sg-http-euc1`,
-    region: FRANKFURT,
+  'SG_HTTP_EUC1': {
+    Name: `sg-http-euc1`,
+    Region: FRANKFURT,
     Description: `security group HTTP (${FRANKFURT})`,
     IpPermissions: [
       {
@@ -29,22 +29,22 @@ const items = {
     //   }
     // ]
   },
-  // 'sg-ssh-euc1': {
-  //   name: `sg-ssh-euc1`,
-  //   region: FRANKFURT,
-  //   Description: `security group SSH (${FRANKFURT})`,
-  //   IpPermissions: [
-  //     {
-  //       IpProtocol: 'tcp',
-  //       FromPort: 22,
-  //       ToPort: 22,
-  //       IpRanges: [{ CidrIp: '0.0.0.0/0' }]
-  //     }
-  //   ]
-  // },
-  // 'sg-from-sg': {
-  //   name: `sg-from-sg`,
-  //   region: FRANKFURT,
+  'SG_SSH_EUC1': {
+    Name: `sg-ssh-euc1`,
+    Region: FRANKFURT,
+    Description: `security group SSH (${FRANKFURT})`,
+    IpPermissions: [
+      {
+        IpProtocol: 'tcp',
+        FromPort: 22,
+        ToPort: 22,
+        IpRanges: [{ CidrIp: '0.0.0.0/0' }]
+      }
+    ]
+  },
+  // 'SG_FROM_SG': {
+  //   Name: `sg-from-sg`,
+  //   Region: FRANKFURT,
   //   Description: `traffic from another security group (${FRANKFURT})`,
   //   IpPermissions: [
   //     // SG for this case should be created before
@@ -55,9 +55,9 @@ const items = {
   //   ]
   // },
 
-  // 'sg-http-euc2': {
-  //   name: `sg-http-euc2`,
-  //   region: ZURICH,
+  // 'SG_HTTP_EUC2': {
+  //   Name: `sg-http-euc2`,
+  //   Region: ZURICH,
   //   Description: `security group HTTP (${ZURICH})`,
   //   IpPermissions: [
   //     {
@@ -70,4 +70,9 @@ const items = {
   // }
 };
 
-module.exports = Object.values(items).map((item) => new SGClass(item));
+Object.keys(items).forEach((key) => items[key] = new SGClass(items[key]));
+
+module.exports = {
+  get SG_ITEMS() { return items },
+  get SG_LIST() { return Object.values(items) }
+};

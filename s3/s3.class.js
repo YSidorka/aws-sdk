@@ -11,7 +11,7 @@ class S3Class {
     } = obj;
 
     this.Region = Region || obj.region;
-    this.Bucket = `${PREFIX}-${obj.name}` || '';
+    this.Bucket = `${PREFIX}-${Name}`;
 
     this.Tags = [{ Key: 'Name', Value: this.Bucket }];
 
