@@ -10,7 +10,10 @@ const {
   CreateTagsCommand,
   RevokeSecurityGroupEgressCommand,
   RequestSpotInstancesCommand,
-  DescribeSpotInstanceRequestsCommand, CreateVpcCommand, DescribeVpcsCommand
+  DescribeSpotInstanceRequestsCommand,
+  CreateVpcCommand,
+  DescribeVpcsCommand,
+  CreateSubnetCommand
 } = require('@aws-sdk/client-ec2');
 
 const { sleep } = require('../common/utils');
@@ -242,6 +245,26 @@ async function getVPCByName(subnetName, region) {
   return data?.Vpcs[0];
 }
 
+async function createSubnet(options, region) {
+  const fn = (obj) => new CreateSubnetCommand(obj);
+  const data = await wrapper({
+    $name: arguments.callee.name,
+    region,
+    fn: fn.bind(null, options || {})
+  });
+
+  if (data?.Subnet?.SubnetId) {
+    await assignTagParams(
+      {
+        Resources: [data.Subnet.SubnetId],
+        Tags: options.Tags
+      },
+      region
+    );
+  }
+  return data?.Subnet;
+}
+
 async function getSubnetByName(subnetName, region) {
   const fn = (obj) => new DescribeSubnetsCommand(obj);
   const data = await wrapper({
@@ -278,5 +301,6 @@ module.exports = {
   getVPCByName,
 
   // Subnet
+  createSubnet,
   getSubnetByName
 };

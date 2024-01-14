@@ -27,10 +27,7 @@ class EC2Class {
 
     this.SubnetId = SubnetId || null;
     this.SubnetName = SubnetName || null;
-    this.SecurityGroups = Array.isArray(SecurityGroups)
-      //? SecurityGroups.map((sgName) => `${PREFIX}-${sgName}`)
-      ? [...SecurityGroups]
-      : [];
+    this.SecurityGroups = Array.isArray(SecurityGroups) ? [...SecurityGroups] : [];
 
     this.UserData = btoa(UserData || USER_DATA);
     Object.assign(this, _obj);

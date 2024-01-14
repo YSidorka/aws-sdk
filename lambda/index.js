@@ -1,4 +1,8 @@
-const { LambdaClient, ListFunctionsCommand, CreateFunctionCommand } = require('@aws-sdk/client-lambda');
+const {
+  LambdaClient,
+  ListFunctionsCommand,
+  CreateFunctionCommand
+} = require('@aws-sdk/client-lambda');
 const { credentials, defaultRegion } = require('../common/config').AWS;
 
 async function wrapper({ region, fn, $name }) {
@@ -25,8 +29,8 @@ const params = {
   Handler: 'index.handler',
   Code: {
     S3Bucket: 'your-s3-bucket',
-    S3Key: 'lambda.zip',
-  },
+    S3Key: 'lambda.zip'
+  }
 };
 
 async function createLambda(options, region) {
@@ -49,7 +53,7 @@ async function getLambdaByName(name, region) {
     fn: fn.bind(null, { Bucket: name })
   });
 
-  let result = data?.Functions.filter((item) => item.FunctionName === name);
+  const result = data?.Functions.filter((item) => item.FunctionName === name);
   return result;
 }
 

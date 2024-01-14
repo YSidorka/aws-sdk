@@ -6,11 +6,17 @@ const {
   SG_SSH_EUC1_B
 } = require('./sg.list').SG_ITEMS;
 
+const {
+  SUBNET_A_PRIVATE,
+  SUBNET_A_PUBLIC,
+  SUBNET_B_PRIVATE,
+  SUBNET_B_PUBLIC
+} = require('./subnet.list').SUBNET_ITEMS;
 
 const items = {
   't2micro-api-euc1-a-private': {
     Region: FRANKFURT,
-    SubnetName: 'sky-subnet-a-private',
+    SubnetName: SUBNET_A_PRIVATE.Name,
 
     Name: 't2-api-a-private',
     InstanceType: T2_MICRO,
@@ -20,7 +26,7 @@ const items = {
 
   't2micro-api-euc1-a-public': {
     Region: FRANKFURT,
-    SubnetName: 'sky-subnet-a-public',
+    SubnetName: SUBNET_A_PUBLIC.Name,
 
     Name: 't2-api-a-public',
     InstanceType: T2_MICRO,
@@ -30,7 +36,7 @@ const items = {
 
   't2micro-api-euc1-b-private': {
     Region: FRANKFURT,
-    SubnetName: 'sky-subnet-b-private',
+    SubnetName: SUBNET_B_PRIVATE.Name,
 
     Name: 't2-api-b-private',
     InstanceType: T2_MICRO,
@@ -40,7 +46,7 @@ const items = {
 
   't2-api-euc1-b-public': {
     Region: FRANKFURT,
-    SubnetName: 'sky-subnet-b-public',
+    SubnetName: SUBNET_B_PUBLIC.Name,
 
     Name: 't2-api-b-public',
     InstanceType: T2_MICRO,
@@ -49,9 +55,9 @@ const items = {
   }
 };
 
-Object.keys(items).forEach((key) => items[key] = new EC2Class(items[key]));
+Object.keys(items).forEach((key) => (items[key] = new EC2Class(items[key])));
 
 module.exports = {
-  get EC2_ITEMS() { return items },
-  get EC2_LIST() { return Object.values(items) }
-}
+  EC2_ITEMS: items,
+  EC2_LIST: Object.values(items)
+};

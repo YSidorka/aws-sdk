@@ -2,13 +2,13 @@ const { FRANKFURT, ZURICH } = require('../common/config');
 const SGClass = require('../ec2/sg.class');
 
 const items = {
-  'SG_EC2_EUC1': {
+  SG_EC2_EUC1: {
     Name: `sg-ec2-euc1`,
     Region: FRANKFURT,
     Description: `security group EC2 (${FRANKFURT})`,
     IpPermissions: []
   },
-  'SG_HTTP_EUC1': {
+  SG_HTTP_EUC1: {
     Name: `sg-http-euc1`,
     Region: FRANKFURT,
     Description: `security group HTTP (${FRANKFURT})`,
@@ -29,7 +29,7 @@ const items = {
     //   }
     // ]
   },
-  'SG_SSH_EUC1': {
+  SG_SSH_EUC1: {
     Name: `sg-ssh-euc1`,
     Region: FRANKFURT,
     Description: `security group SSH (${FRANKFURT})`,
@@ -41,7 +41,7 @@ const items = {
         IpRanges: [{ CidrIp: '0.0.0.0/0' }]
       }
     ]
-  },
+  }
   // 'SG_FROM_SG': {
   //   Name: `sg-from-sg`,
   //   Region: FRANKFURT,
@@ -70,9 +70,9 @@ const items = {
   // }
 };
 
-Object.keys(items).forEach((key) => items[key] = new SGClass(items[key]));
+Object.keys(items).forEach((key) => (items[key] = new SGClass(items[key])));
 
 module.exports = {
-  get SG_ITEMS() { return items },
-  get SG_LIST() { return Object.values(items) }
+  SG_ITEMS: items,
+  SG_LIST: Object.values(items)
 };

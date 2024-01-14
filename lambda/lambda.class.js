@@ -22,7 +22,7 @@ class LambdaClass {
     this.Handler = Handler || 'index.handler';
 
     this.Tags = [{ Key: 'Name', Value: this.FunctionName }];
-    this.Architectures = Architectures || ['x86_64']
+    this.Architectures = Architectures || ['x86_64'];
 
     Object.assign(this, _obj);
   }

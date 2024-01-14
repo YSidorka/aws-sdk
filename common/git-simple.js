@@ -5,7 +5,6 @@ const repoName = 'lambdaGetProducts';
 const destination = './lambda.zip';
 const repoUrl = `https://github.com/${githubUsername}/${repoName}.git`;
 
-
 const git = simpleGit();
 git.clean(CleanOptions.FORCE);
 

@@ -11,7 +11,7 @@ async function downloadFile(url, dest) {
   const response = await axios({
     method: 'get',
     url,
-    responseType: 'stream',
+    responseType: 'stream'
   });
 
   return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ async function downloadLatestCommit(archiveLink) {
   }
 }
 
-downloadLatestCommit(repoUrl).then()
+downloadLatestCommit(repoUrl).then();
 
 module.exports = {
   downloadLatestCommit

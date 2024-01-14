@@ -5,7 +5,9 @@ const {
   getSecurityGroups,
   createSecurityGroup,
   createSpotEC2Instance,
-  createVPC, getVPCByName
+  createVPC,
+  getVPCByName,
+  createSubnet
 } = require('../ec2');
 const { createS3Bucket, getBucketByName } = require('../s3');
 
@@ -159,10 +161,40 @@ async function createVPCs(list) {
     return result;
   }
 }
+
+async function createSubnets(list) {
+  const result = [];
+  try {
+    for (let i = 0; i < list.length; i += 1) {
+      const item = list[i];
+
+      // check is Subnet exists
+      const subnet = await getSubnetByName(item.Name, item.Region);
+
+      if (subnet) {
+        result.push(subnet);
+        continue;
+      }
+
+      if (!item.VpcId && item.VpcName) {
+        const vpc = await getVPCByName(item.VpcName, item.Region);
+        item.VpcId = vpc?.VpcId || null;
+      }
+
+      const newVPC = await createSubnet({ ...item }, item.Region);
+      if (newVPC) result.push(newVPC);
+    }
+    return result;
+  } catch (err) {
+    console.log('Error createVPCs:', err);
+    return result;
+  }
+}
 module.exports = {
   createInstances,
   createSpotInstances,
   createSecurityGroups,
   createS3Buckets,
-  createVPCs
+  createVPCs,
+  createSubnets
 };
