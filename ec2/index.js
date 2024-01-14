@@ -173,15 +173,15 @@ async function getSecurityGroups(options, region) {
   return data?.SecurityGroups || [];
 }
 
-async function getSubnetByAZ(azName, region) {
+async function getSubnetByName(subnetName, region) {
   const fn = (obj) => new DescribeSubnetsCommand(obj);
   const data = await wrapper({
     $name: arguments.callee.name,
     region,
     fn: fn.bind(null, {
       Filters: [
-        { Name: 'availabilityZone', Values: [azName] },
-        { Name: 'tag:Name', Values: [azName] }
+        // { Name: 'availabilityZone', Values: [subnetName] },
+        { Name: 'tag:Name', Values: [subnetName] }
       ]
     })
   });
@@ -238,6 +238,6 @@ module.exports = {
   assignSecurityGroupOutboundRule,
   removeSecurityGroupOutboundRule,
 
-  getSubnetByAZ,
+  getSubnetByName,
   assignTagParams
 };

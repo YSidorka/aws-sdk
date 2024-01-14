@@ -1,6 +1,6 @@
 const {
   getInstances,
-  getSubnetByAZ,
+  getSubnetByName,
   createEC2Instance,
   getSecurityGroups,
   createSecurityGroup,
@@ -25,13 +25,17 @@ async function createInstances(list) {
         continue;
       }
 
-      const subnet = await getSubnetByAZ(item.zone, item.Region);
+      if (!item.SubnetId && item.SubnetName) {
+        const subnet = await getSubnetByName(item.SubnetName, item.Region);
+        item.SubnetId = subnet?.SubnetId || null;
+      }
+
       const ondemList = await createEC2Instance(
         {
           ...item,
           MinCount: 1,
           MaxCount: 1,
-          SubnetId: subnet?.SubnetId || null
+          SubnetId: item.SubnetId
         },
         item.Region
       );

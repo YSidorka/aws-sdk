@@ -9,6 +9,7 @@ class SGClass {
       IpProtocol,
       IpPermissions,
       IpPermissionsEgress,
+      VpcId,
       name,
       _obj
     } = obj;
@@ -21,6 +22,8 @@ class SGClass {
 
     this.IpPermissions = Array.isArray(IpPermissions) ? IpPermissions : [];
     this.IpPermissionsEgress = Array.isArray(IpPermissionsEgress) ? IpPermissionsEgress : [];
+
+    this.VpcId = VpcId || '';
     Object.assign(this, _obj);
   }
 }

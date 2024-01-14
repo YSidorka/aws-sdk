@@ -4,9 +4,12 @@ class EC2Class {
   constructor(obj) {
     const {
       Region,
+      SubnetId,
+      SubnetName,
+
+      Name,
       InstanceType,
       ImageId,
-      Name,
       Tags,
       SecurityGroups,
       UserData,
@@ -19,9 +22,11 @@ class EC2Class {
     this.InstanceType = obj.InstanceType || null;
     this.ImageId = obj.ImageId || null;
 
-    this.Name = `${PREFIX}-${obj.name}` || '';
+    this.Name = `${PREFIX}-${obj.Name}` || '';
     this.Tags = [{ Key: 'Name', Value: this.Name }];
 
+    this.SubnetId = obj.SubnetId || null;
+    this.SubnetName = obj.SubnetName || null;
     this.SecurityGroups = Array.isArray(obj.SecurityGroups)
       ? obj.SecurityGroups.map((name) => `${PREFIX}-${name}`)
       : [];

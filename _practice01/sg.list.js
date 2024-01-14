@@ -28,7 +28,7 @@ const items = {
     //     IpRanges: [{ CidrIp: "0.0.0.0/0" }]
     //   }
     // ]
-  }
+  },
   // 'sg-ssh-euc1': {
   //   name: `sg-ssh-euc1`,
   //   region: FRANKFURT,
