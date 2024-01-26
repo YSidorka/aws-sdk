@@ -13,6 +13,7 @@ class EC2Class {
       Tags,
       SecurityGroups,
       UserData,
+      KeyName,
 
       ..._obj
     } = obj;
@@ -30,6 +31,8 @@ class EC2Class {
     this.SecurityGroups = Array.isArray(SecurityGroups) ? [...SecurityGroups] : [];
 
     this.UserData = btoa(UserData || USER_DATA);
+    this.KeyName = KeyName ? `${PREFIX}-${KeyName}` : null;
+
     Object.assign(this, _obj);
   }
 }

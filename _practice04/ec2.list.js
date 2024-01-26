@@ -14,6 +14,16 @@ const {
 } = require('./subnet.list').SUBNET_ITEMS;
 
 const items = {
+  't2micro-bastion-euc1-a': {
+    Region: FRANKFURT,
+    SubnetName: SUBNET_A_PUBLIC.Name,
+
+    Name: 't2-bastion-a',
+    InstanceType: T2_MICRO,
+    ImageId: 'ami-0669b163befffbdfc',
+    SecurityGroups: [SG_SSH_EUC1_A.Name],
+    KeyName: 'key-euc1-rsa'
+  },
   't2micro-api-euc1-a-private': {
     Region: FRANKFURT,
     SubnetName: SUBNET_A_PRIVATE.Name,
@@ -21,38 +31,39 @@ const items = {
     Name: 't2-api-a-private',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: [SG_SSH_EUC1_A.Name]
+    SecurityGroups: [SG_SSH_EUC1_A.Name],
+    KeyName: 'key-euc1-rsa'
   },
-
-  't2micro-api-euc1-a-public': {
-    Region: FRANKFURT,
-    SubnetName: SUBNET_A_PUBLIC.Name,
-
-    Name: 't2-api-a-public',
-    InstanceType: T2_MICRO,
-    ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: [SG_SSH_EUC1_A.Name]
-  },
-
-  't2micro-api-euc1-b-private': {
-    Region: FRANKFURT,
-    SubnetName: SUBNET_B_PRIVATE.Name,
-
-    Name: 't2-api-b-private',
-    InstanceType: T2_MICRO,
-    ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: [SG_SSH_EUC1_B.Name]
-  },
-
-  't2-api-euc1-b-public': {
-    Region: FRANKFURT,
-    SubnetName: SUBNET_B_PUBLIC.Name,
-
-    Name: 't2-api-b-public',
-    InstanceType: T2_MICRO,
-    ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: [SG_SSH_EUC1_B.Name]
-  }
+  // 't2micro-api-euc1-a-public': {
+  //   Region: FRANKFURT,
+  //   SubnetName: SUBNET_A_PUBLIC.Name,
+  //
+  //   Name: 't2-api-a-public',
+  //   InstanceType: T2_MICRO,
+  //   ImageId: 'ami-0669b163befffbdfc',
+  //   SecurityGroups: [SG_SSH_EUC1_A.Name],
+  //   KeyName: 'key-euc1-rsa'
+  // },
+  // 't2micro-api-euc1-b-private': {
+  //   Region: FRANKFURT,
+  //   SubnetName: SUBNET_B_PRIVATE.Name,
+  //
+  //   Name: 't2-api-b-private',
+  //   InstanceType: T2_MICRO,
+  //   ImageId: 'ami-0669b163befffbdfc',
+  //   SecurityGroups: [SG_SSH_EUC1_B.Name],
+  //   KeyName: 'key-euc1-rsa'
+  // },
+  // 't2-api-euc1-b-public': {
+  //   Region: FRANKFURT,
+  //   SubnetName: SUBNET_B_PUBLIC.Name,
+  //
+  //   Name: 't2-api-b-public',
+  //   InstanceType: T2_MICRO,
+  //   ImageId: 'ami-0669b163befffbdfc',
+  //   SecurityGroups: [SG_SSH_EUC1_B.Name],
+  //   KeyName: 'key-euc1-rsa'
+  // }
 };
 
 Object.keys(items).forEach((key) => (items[key] = new EC2Class(items[key])));

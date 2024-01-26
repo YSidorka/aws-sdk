@@ -10,7 +10,7 @@ const items = {
     Name: 't2-ui-a',
     InstanceType: T2_MICRO,
     ImageId: 'ami-0669b163befffbdfc',
-    SecurityGroups: [SG_EC2_EUC1.Name, SG_HTTP_EUC1.Name]
+    SecurityGroups: [SG_EC2_EUC1.Name, SG_HTTP_EUC1.Name, SG_SSH_EUC1.Name]
   },
   't2micro-ui-euc1-b': {
     Region: FRANKFURT,

@@ -6,3 +6,5 @@ docs
 
 .env
 .env.json
+
+*.pem

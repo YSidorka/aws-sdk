@@ -7,8 +7,8 @@ const { SUBNET_LIST } = require('./subnet.list');
 
 async function init() {
   try {
-    const vpcList = await createVPCs(VPC_LIST);
-    const subnetList = await createSubnets(SUBNET_LIST);
+    // const vpcList = await createVPCs(VPC_LIST);
+    // const subnetList = await createSubnets(SUBNET_LIST);
 
     const sgList = await createSecurityGroups(SG_LIST);
 
@@ -22,8 +22,8 @@ async function init() {
     });
     const ec2List = await createInstances(EC2_LIST);
 
-    console.log(vpcList);
-    console.log(subnetList);
+    // console.log(vpcList);
+    // console.log(subnetList);
     console.log(sgList);
     console.log(ec2List);
   } catch (err) {
